@@ -1,4 +1,6 @@
 #pragma once
+#include <cstdlib>
+#include <ctime>
 
 namespace MyMediaPlayer {
 
@@ -22,7 +24,7 @@ namespace MyMediaPlayer {
 			//TODO: добавьте код конструктора
 			//
 		}
-	
+		
 	protected:
 		/// <summary>
 		/// Освободить все используемые ресурсы.
@@ -36,51 +38,32 @@ namespace MyMediaPlayer {
 		}
 	private: AxWMPLib::AxWindowsMediaPlayer^  MediaPlayer;
 	protected:
-
-
-
-
-
-
-
-
-
 	private: System::Windows::Forms::OpenFileDialog^  oFileDialog;
-
-
-
 	private: System::Windows::Forms::Button^  btnPlay;
 	private: System::Windows::Forms::TrackBar^  trackBarMedia;
 	private: System::Windows::Forms::Timer^  timerPlay;
-
-
-
 	private: System::Windows::Forms::Button^  btnPause;
 	private: System::Windows::Forms::Button^  btnStop;
 	private: System::Windows::Forms::Button^  btpPrevious;
 	private: System::Windows::Forms::Button^  btnNext;
 	private: System::Windows::Forms::Button^  btnBackward;
-
-
-
-
-
 	private: System::Windows::Forms::Button^  btnForward;
 	private: System::Windows::Forms::TrackBar^  trackBarVolume;
 	private: System::Windows::Forms::PictureBox^  pictureBoxVolume;
 	private: System::Windows::Forms::ImageList^  imageListVolume;
 	private: System::Windows::Forms::Button^  btnAddFile;
 	private: System::Windows::Forms::Button^  btnDelete;
-	private: System::Windows::Forms::Button^  btnFolder;
 	private: System::Windows::Forms::Button^  btnDeleteAll;
 	private: System::Windows::Forms::ListView^  PlayList;
-
 	private: System::Windows::Forms::ColumnHeader^  columnHeader1;
 	private: System::Windows::Forms::ColumnHeader^  columnHeader2;
-	private: System::Windows::Forms::FolderBrowserDialog^  folderBrowserDialog1;
+
 	private: System::Windows::Forms::Button^  btnMinimize;
 	private: System::Windows::Forms::Button^  btnMaximize;
 	private: System::Windows::Forms::Button^  btnClose;
+	private: System::Windows::Forms::Panel^  panelTop;
+	private: System::Windows::Forms::CheckBox^  cbShuffle;
+	private: System::Windows::Forms::PictureBox^  pictureBoxIcon;
 	private: System::ComponentModel::IContainer^  components;
 	protected:
 
@@ -88,7 +71,6 @@ namespace MyMediaPlayer {
 		/// <summary>
 		/// Обязательная переменная конструктора.
 		/// </summary>
-
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -115,19 +97,22 @@ namespace MyMediaPlayer {
 			this->imageListVolume = (gcnew System::Windows::Forms::ImageList(this->components));
 			this->btnAddFile = (gcnew System::Windows::Forms::Button());
 			this->btnDelete = (gcnew System::Windows::Forms::Button());
-			this->btnFolder = (gcnew System::Windows::Forms::Button());
 			this->btnDeleteAll = (gcnew System::Windows::Forms::Button());
 			this->PlayList = (gcnew System::Windows::Forms::ListView());
 			this->columnHeader1 = (gcnew System::Windows::Forms::ColumnHeader());
 			this->columnHeader2 = (gcnew System::Windows::Forms::ColumnHeader());
-			this->folderBrowserDialog1 = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			this->btnMinimize = (gcnew System::Windows::Forms::Button());
 			this->btnMaximize = (gcnew System::Windows::Forms::Button());
 			this->btnClose = (gcnew System::Windows::Forms::Button());
+			this->panelTop = (gcnew System::Windows::Forms::Panel());
+			this->pictureBoxIcon = (gcnew System::Windows::Forms::PictureBox());
+			this->cbShuffle = (gcnew System::Windows::Forms::CheckBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->MediaPlayer))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBarMedia))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBarVolume))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBoxVolume))->BeginInit();
+			this->panelTop->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBoxIcon))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// MediaPlayer
@@ -144,7 +129,8 @@ namespace MyMediaPlayer {
 			// 
 			// oFileDialog
 			// 
-			this->oFileDialog->Filter = L"Audio files|*.mp3; *.wav;|Video Files|*.mp4;*.mkv;*.flv;";
+			this->oFileDialog->Filter = L"Audio files|*.mp3; *.wav;|Video Files|*.mp4;*.mkv;*.flv;|All files|*.*";
+			this->oFileDialog->Multiselect = true;
 			this->oFileDialog->Title = L"Chose Files";
 			// 
 			// btnPlay
@@ -161,7 +147,7 @@ namespace MyMediaPlayer {
 			this->btnPlay->Size = System::Drawing::Size(32, 32);
 			this->btnPlay->TabIndex = 3;
 			this->btnPlay->UseVisualStyleBackColor = false;
-			this->btnPlay->Click += gcnew System::EventHandler(this, &MyForm::button1_Click);
+			this->btnPlay->Click += gcnew System::EventHandler(this, &MyForm::btnPlay_Click);
 			// 
 			// trackBarMedia
 			// 
@@ -169,7 +155,7 @@ namespace MyMediaPlayer {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->trackBarMedia->LargeChange = 1;
 			this->trackBarMedia->Location = System::Drawing::Point(2, 400);
-			this->trackBarMedia->Maximum = 100;
+			this->trackBarMedia->Maximum = 0;
 			this->trackBarMedia->Name = L"trackBarMedia";
 			this->trackBarMedia->Size = System::Drawing::Size(506, 45);
 			this->trackBarMedia->TabIndex = 4;
@@ -179,7 +165,7 @@ namespace MyMediaPlayer {
 			// 
 			// timerPlay
 			// 
-			this->timerPlay->Tick += gcnew System::EventHandler(this, &MyForm::timer1_Tick);
+			this->timerPlay->Tick += gcnew System::EventHandler(this, &MyForm::timerPlay_Tick);
 			// 
 			// btnPause
 			// 
@@ -227,6 +213,7 @@ namespace MyMediaPlayer {
 			this->btpPrevious->Size = System::Drawing::Size(32, 32);
 			this->btpPrevious->TabIndex = 7;
 			this->btpPrevious->UseVisualStyleBackColor = false;
+			this->btpPrevious->Click += gcnew System::EventHandler(this, &MyForm::btpPrevious_Click);
 			// 
 			// btnNext
 			// 
@@ -242,6 +229,7 @@ namespace MyMediaPlayer {
 			this->btnNext->Size = System::Drawing::Size(32, 32);
 			this->btnNext->TabIndex = 8;
 			this->btnNext->UseVisualStyleBackColor = false;
+			this->btnNext->Click += gcnew System::EventHandler(this, &MyForm::btnNext_Click);
 			// 
 			// btnBackward
 			// 
@@ -257,6 +245,7 @@ namespace MyMediaPlayer {
 			this->btnBackward->Size = System::Drawing::Size(32, 32);
 			this->btnBackward->TabIndex = 9;
 			this->btnBackward->UseVisualStyleBackColor = false;
+			this->btnBackward->Click += gcnew System::EventHandler(this, &MyForm::btnBackward_Click);
 			// 
 			// btnForward
 			// 
@@ -272,6 +261,7 @@ namespace MyMediaPlayer {
 			this->btnForward->Size = System::Drawing::Size(32, 32);
 			this->btnForward->TabIndex = 10;
 			this->btnForward->UseVisualStyleBackColor = false;
+			this->btnForward->Click += gcnew System::EventHandler(this, &MyForm::btnForward_Click);
 			// 
 			// trackBarVolume
 			// 
@@ -297,6 +287,7 @@ namespace MyMediaPlayer {
 			this->pictureBoxVolume->SizeMode = System::Windows::Forms::PictureBoxSizeMode::AutoSize;
 			this->pictureBoxVolume->TabIndex = 12;
 			this->pictureBoxVolume->TabStop = false;
+			this->pictureBoxVolume->Click += gcnew System::EventHandler(this, &MyForm::pictureBoxVolume_Click);
 			// 
 			// imageListVolume
 			// 
@@ -316,10 +307,11 @@ namespace MyMediaPlayer {
 			this->btnAddFile->FlatAppearance->BorderColor = System::Drawing::Color::White;
 			this->btnAddFile->FlatAppearance->BorderSize = 0;
 			this->btnAddFile->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->btnAddFile->Location = System::Drawing::Point(540, 400);
+			this->btnAddFile->Location = System::Drawing::Point(598, 422);
 			this->btnAddFile->Name = L"btnAddFile";
 			this->btnAddFile->Size = System::Drawing::Size(24, 24);
 			this->btnAddFile->TabIndex = 13;
+			this->btnAddFile->Tag = L"";
 			this->btnAddFile->UseVisualStyleBackColor = false;
 			this->btnAddFile->Click += gcnew System::EventHandler(this, &MyForm::btnAddFile_Click);
 			// 
@@ -332,27 +324,12 @@ namespace MyMediaPlayer {
 			this->btnDelete->FlatAppearance->BorderColor = System::Drawing::Color::White;
 			this->btnDelete->FlatAppearance->BorderSize = 0;
 			this->btnDelete->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->btnDelete->Location = System::Drawing::Point(600, 400);
+			this->btnDelete->Location = System::Drawing::Point(628, 422);
 			this->btnDelete->Name = L"btnDelete";
 			this->btnDelete->Size = System::Drawing::Size(24, 24);
 			this->btnDelete->TabIndex = 14;
 			this->btnDelete->UseVisualStyleBackColor = false;
 			this->btnDelete->Click += gcnew System::EventHandler(this, &MyForm::btnDelete_Click);
-			// 
-			// btnFolder
-			// 
-			this->btnFolder->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
-			this->btnFolder->BackColor = System::Drawing::Color::LightSteelBlue;
-			this->btnFolder->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"btnFolder.BackgroundImage")));
-			this->btnFolder->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Zoom;
-			this->btnFolder->FlatAppearance->BorderColor = System::Drawing::Color::White;
-			this->btnFolder->FlatAppearance->BorderSize = 0;
-			this->btnFolder->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->btnFolder->Location = System::Drawing::Point(570, 400);
-			this->btnFolder->Name = L"btnFolder";
-			this->btnFolder->Size = System::Drawing::Size(24, 24);
-			this->btnFolder->TabIndex = 15;
-			this->btnFolder->UseVisualStyleBackColor = false;
 			// 
 			// btnDeleteAll
 			// 
@@ -363,7 +340,7 @@ namespace MyMediaPlayer {
 			this->btnDeleteAll->FlatAppearance->BorderColor = System::Drawing::Color::White;
 			this->btnDeleteAll->FlatAppearance->BorderSize = 0;
 			this->btnDeleteAll->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-			this->btnDeleteAll->Location = System::Drawing::Point(630, 400);
+			this->btnDeleteAll->Location = System::Drawing::Point(658, 422);
 			this->btnDeleteAll->Name = L"btnDeleteAll";
 			this->btnDeleteAll->Size = System::Drawing::Size(24, 24);
 			this->btnDeleteAll->TabIndex = 16;
@@ -372,32 +349,34 @@ namespace MyMediaPlayer {
 			// 
 			// PlayList
 			// 
-			this->PlayList->AllowColumnReorder = true;
 			this->PlayList->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
 				| System::Windows::Forms::AnchorStyles::Right));
+			this->PlayList->BackColor = System::Drawing::Color::LightSteelBlue;
+			this->PlayList->BorderStyle = System::Windows::Forms::BorderStyle::None;
 			this->PlayList->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(2) { this->columnHeader1, this->columnHeader2 });
 			this->PlayList->FullRowSelect = true;
-			this->PlayList->Location = System::Drawing::Point(502, 27);
+			this->PlayList->HeaderStyle = System::Windows::Forms::ColumnHeaderStyle::Nonclickable;
+			this->PlayList->HideSelection = false;
+			this->PlayList->Location = System::Drawing::Point(504, 27);
+			this->PlayList->MultiSelect = false;
 			this->PlayList->Name = L"PlayList";
-			this->PlayList->Size = System::Drawing::Size(191, 367);
+			this->PlayList->ShowGroups = false;
+			this->PlayList->Size = System::Drawing::Size(189, 367);
 			this->PlayList->TabIndex = 17;
 			this->PlayList->UseCompatibleStateImageBehavior = false;
 			this->PlayList->View = System::Windows::Forms::View::Details;
-			this->PlayList->DoubleClick += gcnew System::EventHandler(this, &MyForm::listView1_DoubleClick);
+			this->PlayList->DoubleClick += gcnew System::EventHandler(this, &MyForm::PlayList_DoubleClick);
 			// 
 			// columnHeader1
 			// 
 			this->columnHeader1->Text = L"Title";
-			this->columnHeader1->Width = 102;
+			this->columnHeader1->Width = 143;
 			// 
 			// columnHeader2
 			// 
 			this->columnHeader2->Text = L"Source";
-			this->columnHeader2->Width = 75;
-			// 
-			// folderBrowserDialog1
-			// 
-			this->folderBrowserDialog1->ShowNewFolderButton = false;
+			this->columnHeader2->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
+			this->columnHeader2->Width = 46;
 			// 
 			// btnMinimize
 			// 
@@ -447,14 +426,57 @@ namespace MyMediaPlayer {
 			this->btnClose->UseVisualStyleBackColor = false;
 			this->btnClose->Click += gcnew System::EventHandler(this, &MyForm::btnClose_Click);
 			// 
+			// panelTop
+			// 
+			this->panelTop->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left)
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->panelTop->Controls->Add(this->pictureBoxIcon);
+			this->panelTop->Location = System::Drawing::Point(0, 0);
+			this->panelTop->Name = L"panelTop";
+			this->panelTop->Size = System::Drawing::Size(693, 27);
+			this->panelTop->TabIndex = 21;
+			this->panelTop->DoubleClick += gcnew System::EventHandler(this, &MyForm::panelTop_DoubleClick);
+			this->panelTop->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &MyForm::panelTop_MouseDown);
+			this->panelTop->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &MyForm::panelTop_MouseMove);
+			// 
+			// pictureBoxIcon
+			// 
+			this->pictureBoxIcon->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBoxIcon.BackgroundImage")));
+			this->pictureBoxIcon->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Zoom;
+			this->pictureBoxIcon->Enabled = false;
+			this->pictureBoxIcon->Location = System::Drawing::Point(3, 0);
+			this->pictureBoxIcon->Name = L"pictureBoxIcon";
+			this->pictureBoxIcon->Size = System::Drawing::Size(28, 28);
+			this->pictureBoxIcon->TabIndex = 0;
+			this->pictureBoxIcon->TabStop = false;
+			// 
+			// cbShuffle
+			// 
+			this->cbShuffle->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
+			this->cbShuffle->Appearance = System::Windows::Forms::Appearance::Button;
+			this->cbShuffle->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"cbShuffle.BackgroundImage")));
+			this->cbShuffle->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
+			this->cbShuffle->CheckAlign = System::Drawing::ContentAlignment::MiddleCenter;
+			this->cbShuffle->FlatAppearance->BorderColor = System::Drawing::Color::LightSteelBlue;
+			this->cbShuffle->FlatAppearance->BorderSize = 0;
+			this->cbShuffle->FlatStyle = System::Windows::Forms::FlatStyle::Popup;
+			this->cbShuffle->Location = System::Drawing::Point(514, 420);
+			this->cbShuffle->Name = L"cbShuffle";
+			this->cbShuffle->Size = System::Drawing::Size(32, 29);
+			this->cbShuffle->TabIndex = 22;
+			this->cbShuffle->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+			this->cbShuffle->TextImageRelation = System::Windows::Forms::TextImageRelation::TextBeforeImage;
+			this->cbShuffle->UseVisualStyleBackColor = true;
+			// 
 			// MyForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
 			this->BackColor = System::Drawing::Color::LightSteelBlue;
 			this->ClientSize = System::Drawing::Size(694, 472);
+			this->ControlBox = false;
+			this->Controls->Add(this->cbShuffle);
 			this->Controls->Add(this->PlayList);
 			this->Controls->Add(this->btnDeleteAll);
-			this->Controls->Add(this->btnFolder);
 			this->Controls->Add(this->btnDelete);
 			this->Controls->Add(this->btnAddFile);
 			this->Controls->Add(this->pictureBoxVolume);
@@ -471,6 +493,7 @@ namespace MyMediaPlayer {
 			this->Controls->Add(this->btnClose);
 			this->Controls->Add(this->btnMaximize);
 			this->Controls->Add(this->btnMinimize);
+			this->Controls->Add(this->panelTop);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::None;
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			this->MinimumSize = System::Drawing::Size(694, 472);
@@ -482,6 +505,8 @@ namespace MyMediaPlayer {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBarMedia))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBarVolume))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBoxVolume))->EndInit();
+			this->panelTop->ResumeLayout(false);
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBoxIcon))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -489,21 +514,48 @@ namespace MyMediaPlayer {
 #pragma endregion
 	private: array<String^>^ path;
 			 array<String^>^ filename;
-	private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e) {
-		trackBarMedia->Maximum = int(MediaPlayer->currentMedia->duration);
-		if (trackBarMedia->Maximum > 0)
-			trackBarMedia->Value = MediaPlayer->Ctlcontrols->currentPosition;
+			 Point lastCursor;
+			 unsigned int currentMediaItemIndex = 0;
+			 
+	private: System::Void timerPlay_Tick(System::Object^  sender, System::EventArgs^  e) {
+		try {
+				trackBarMedia->Maximum = int(MediaPlayer->currentMedia->duration);
+				if (trackBarMedia->Maximum > 0) {
+					trackBarMedia->Value = MediaPlayer->Ctlcontrols->currentPosition;
+					if (trackBarMedia->Maximum == trackBarMedia->Value) {
+						if (PlayList->Items->Count > 1) {
+							if (cbShuffle->Checked) {
+								while (true)
+								{
+									int randIndex = rand() % PlayList->Items->Count;
+									if (currentMediaItemIndex != randIndex) { currentMediaItemIndex = randIndex; break; }
+								}
+							}
+							else {
+								if (PlayList->Items->Count - 1 > currentMediaItemIndex) {
+									currentMediaItemIndex++;
+								}
+								else {
+									currentMediaItemIndex = 0;
+								}
+							}
+							MediaPlayer->URL = PlayList->Items[currentMediaItemIndex]->SubItems[1]->Text;
+						}
+					}
+				}
+		}
+		catch (Exception^ ex) {}
 	}
-
-	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+	private: System::Void btnPlay_Click(System::Object^  sender, System::EventArgs^  e) {
 		if (!timerPlay->Enabled) timerPlay->Enabled = true;
+		if (MediaPlayer->URL->Length == 0) 
+			if (PlayList->Items->Count > 0)
+				MediaPlayer->URL = PlayList->Items[0]->SubItems[1]->Text;
 		MediaPlayer->Ctlcontrols->play();
 	}
-
 	private: System::Void MyForm_Load(System::Object^  sender, System::EventArgs^  e) {
 		pictureBoxVolume->Image = imageListVolume->Images[2];
 	}
-
 	private: System::Void trackBarVolume_Scroll(System::Object^  sender, System::EventArgs^  e) {
 		MediaPlayer->settings->volume = trackBarVolume->Value;
 		if (MediaPlayer->settings->volume == 0)
@@ -515,15 +567,15 @@ namespace MyMediaPlayer {
 		if (MediaPlayer->settings->volume > 70)
 			pictureBoxVolume->Image = imageListVolume->Images[3];
 	}
-		 
 	private: System::Void btnAddFile_Click(System::Object^  sender, System::EventArgs^  e) {
-		oFileDialog->Multiselect = true;
+		int addIndex = PlayList->Items->Count;
 		if (oFileDialog->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
 			filename = oFileDialog->SafeFileNames;
 			path = oFileDialog->FileNames;
 			for (int i = 0; i < filename->Length; i++) {
 				PlayList->Items->Add(filename[i]->ToString());
-				PlayList->Items[i]->SubItems->Add(path[i]->ToString());
+				PlayList->Items[addIndex]->SubItems->Add(path[i]->ToString());
+				addIndex++;
 			}
 		}
 	}
@@ -531,7 +583,9 @@ namespace MyMediaPlayer {
 		PlayList->Items->Clear();
 	}
 	private: System::Void btnDelete_Click(System::Object^  sender, System::EventArgs^  e) {
-		PlayList->Items[PlayList->FocusedItem->Index]->Remove();
+		if (PlayList->Items->Count > 0)
+			if (PlayList->FocusedItem->Index > -1)
+				PlayList->Items[PlayList->FocusedItem->Index]->Remove();
 	}
 	private: System::Void btnPause_Click(System::Object^  sender, System::EventArgs^  e) {
 		if (timerPlay->Enabled) timerPlay->Enabled = false;
@@ -542,8 +596,9 @@ namespace MyMediaPlayer {
 		MediaPlayer->Ctlcontrols->stop();
 		trackBarMedia->Value = 0;
 	}
-	private: System::Void listView1_DoubleClick(System::Object^  sender, System::EventArgs^  e) {
-		MediaPlayer->URL = PlayList->Items[PlayList->FocusedItem->Index]->SubItems[1]->Text;
+	private: System::Void PlayList_DoubleClick(System::Object^  sender, System::EventArgs^  e) {
+		currentMediaItemIndex = PlayList->FocusedItem->Index;
+		MediaPlayer->URL = PlayList->Items[currentMediaItemIndex]->SubItems[1]->Text;
 		trackBarMedia->Value = 0;
 		if (!timerPlay->Enabled) timerPlay->Enabled = true;
 
@@ -565,6 +620,69 @@ namespace MyMediaPlayer {
 	}
 	private: System::Void btnMinimize_Click(System::Object^  sender, System::EventArgs^  e) {
 		this->WindowState = FormWindowState::Minimized;
+	}
+	private: System::Void panelTop_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+		lastCursor = e->Location;
+	}
+	private: System::Void panelTop_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+		if (e->Button == System::Windows::Forms::MouseButtons::Left) {
+			this->Left = this->Left + (e->X - lastCursor.X);
+			this->Top = this->Top + (e->Y - lastCursor.Y);
+		}
+	}
+	private: System::Void panelTop_DoubleClick(System::Object^  sender, System::EventArgs^  e) {
+		if (this->WindowState == FormWindowState::Normal) {
+			this->WindowState = FormWindowState::Maximized;
+		}
+		else
+		{
+			this->WindowState = FormWindowState::Normal;
+		}
+	}
+	private: System::Void btnForward_Click(System::Object^  sender, System::EventArgs^  e) {
+		MediaPlayer->Ctlcontrols->currentPosition += 10;
+	}
+	private: System::Void btnBackward_Click(System::Object^  sender, System::EventArgs^  e) {
+		MediaPlayer->Ctlcontrols->currentPosition -= 10;
+	}
+	private: System::Void pictureBoxVolume_Click(System::Object^  sender, System::EventArgs^  e) {
+		MediaPlayer->settings->mute = true;
+		if(MediaPlayer->settings->mute) pictureBoxVolume->Image = imageListVolume->Images[0];
+	}
+	private: System::Void btnNext_Click(System::Object^  sender, System::EventArgs^  e) {
+//		srand(time(NULL));
+		if (PlayList->Items->Count > 1) {
+			if (cbShuffle->Checked) {
+				while (true)
+				{
+					int randIndex = rand() % PlayList->Items->Count;
+					if (currentMediaItemIndex != randIndex) { currentMediaItemIndex = randIndex; break; }
+				}
+			}
+			else {
+				if (PlayList->Items->Count - 1 > currentMediaItemIndex) {
+					currentMediaItemIndex++;
+				}
+				else {
+					currentMediaItemIndex = 0;
+				}
+			}
+				MediaPlayer->URL = PlayList->Items[currentMediaItemIndex]->SubItems[1]->Text;
+				if (!timerPlay->Enabled) timerPlay->Enabled = true;
+		}
+	}
+	private: System::Void btpPrevious_Click(System::Object^  sender, System::EventArgs^  e) {
+		if (PlayList->Items->Count > 0) {
+			if (currentMediaItemIndex > 0) {
+				if (MediaPlayer->Ctlcontrols->currentPosition < 2)
+					currentMediaItemIndex--;
+			}
+			else {
+				currentMediaItemIndex = 0;
+			}
+			MediaPlayer->URL = PlayList->Items[currentMediaItemIndex]->SubItems[1]->Text;
+			if (!timerPlay->Enabled) timerPlay->Enabled = true;
+		}
 	}
 };
 }
